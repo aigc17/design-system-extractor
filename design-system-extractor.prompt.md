@@ -6,9 +6,9 @@
 ## 🌟 动态生成与模板参考规范 (Generation & Template Guidelines)
 本次提取任务包含两个维度的产出，请准确把握“自由发挥”与“严格受控”的边界：
 1. **核心设计系统（动态生成）**：对于 `src/design-system/` 目录下的所有 Token 数据、UI 组件代码（Button, Card 等）及其逻辑，你需要根据用户的实际输入进行**深度理解与动态解析生成**，确保组件代码的真实性、复用性和专业度。
-2. **文档与预览页（遵循模板框架）**：
-   - 读取 **`DESIGN.template.md`**：这是你输出 `DESIGN.md` 时需要遵守的**结构框架**。你需要把提取到的真实 Token 和组件说明填入这个骨架中，保持一致的标题层级和表格排版，而不是原封不动照抄。
-   - 读取 **`App-Preview.template.jsx`**：这是你输出 `App.jsx`（预览页）时的**视觉排版参考**。你需要参考它干净的区块划分和展示结构来知道“预览页应该长什么样”，但里面具体实例化的组件和色块，必须替换为你刚刚真实提取并生成的组件。
+2. **文档与预览页（遵循结构骨架）**：
+   - 读取 **`DESIGN.template.md`**：这是你输出 `DESIGN.md` 时需要遵守的**结构框架**。你需要把提取到的真实 Token 和组件说明填入这个骨架中，保持一致的标题层级和表格排版。
+   - 读取 **`App-Preview.template.jsx`**：**极其重要！** 这是你输出 `App.jsx`（预览页）时的**绝对 DOM 结构与样式类名骨架**。你需要保留里面所有的 HTML 标签层级、`className`（例如 `page-shell`, `swatch-card`, `type-row`）布局，**仅仅通过 React 循环（Map）将你提取出来的色彩、字阶、组件数据“注入”到这些固定的结构中。** 绝对不允许随意更改外层布局或丢弃原有的展示逻辑。
 
 ## 执行流程 (Workflow)
 
@@ -45,23 +45,24 @@ src/
 │   ├── styles/
 │   │   └── globals.css           # 令牌 → CSS 变量 + 基础重置
 │   └── index.js                  # 顶层导出 (组件 + 令牌 + hooks)
-├── App.jsx                       # ★ 预览页 — 参照模板的排版逻辑，注入提取的真实组件
+├── App.jsx                       # ★ 预览页 — 严格遵循 App-Preview.template.jsx 结构
 └── main.jsx                      # 入口
 ```
 
 ### 步骤 4：构建预览页 (`App.jsx`)
-**要求**：参照同目录下的 `App-Preview.template.jsx` 作为 UI 代码骨架和视觉风格参考。
-页面结构需包含：
+**要求**：严格基于 `App-Preview.template.jsx` 的 JSX 骨架来实现。
+页面结构必须包含（且不得破坏原有 className）：
 1. **Header/Topbar**：设计系统名称及简述。
-2. **Color Palette (色彩面板)**：直观展示主色、中性色色块，并显示 HEX 值和变量名。
-3. **Typography (字体排印)**：以列表形式展示不同字号的视觉效果（Heading, Body, Caption）。
-4. **Spacing & Shapes (间距与形状)**：展示圆角大小与阴影层级。
-5. **Components Showcase (组件画廊)**：可交互的组件展示区，将提取到的所有业务组件实例化并展示不同状态（Default, Hover, Disabled 等）。
+2. **Color Palette (色彩面板)**：使用原本的 `.swatch-card` 结构循环渲染提取出来的颜色。
+3. **Typography (字体排印)**：使用原本的 `.type-row` 结构循环渲染字阶。
+4. **Spacing & Shapes (间距与形状)**：保留原有的表格结构展示圆角和间距。
+5. **Components Showcase (组件画廊)**：在预留的插槽中实例化你刚刚提取出来的组件。
+6. **Aside Code Panel**：保留右侧代码展示抽屉的 DOM 结构。
 
 ## 编码规范要求 (Coding Conventions)
 1. **Tokens**：所有 JS token 最终需要在 `globals.css` 映射为 CSS Variables (`--color-primary`, `--spacing-4` 等)。
 2. **Components**：组件代码必须根据实际输入动态生成（React 函数组件）。样式推荐使用 CSS Modules 或 Tailwind CSS（视具体情况而定，但必须与 `globals.css` 中的 token 绑定）。代码需健壮且支持复用。
-3. **App.jsx**：样式可以直接内联或引用单独的样式表，确保预览效果美观，呈现现代且干净的 UI 质感。
+3. **App.jsx**：除了注入你的提取数据，不允许改变预览页的外观排版。
 
 ---
-**开始任务**：请阅读用户的输入，并结合“动态提取能力”与“模板参考规范”，输出完整的 `DESIGN.md` 与代码体系。
+**开始任务**：请阅读用户的输入，并结合“动态提取能力”与“模板 DOM 骨架要求”，输出完整的 `DESIGN.md` 与代码体系。
